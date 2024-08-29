@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Client</title>
+  </head>
+  <body>
+    <h1>WebSocket Client</h1>
+    <input type="text" id="messageInput" placeholder="Enter message" />
+    <button id="sendMessageBtn">Send Message</button>
+    <ul id="messages"></ul>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+      const socket = io("ws://localhost:3001/chat", {
+        transports: ["websocket"],
+      });
+
+      const messageInput = document.getElementById("messageInput");
+      const sendMessageBtn = document.getElementById("sendMessageBtn");
+      const messagesList = document.getElementById("messages");
+
+      sendMessageBtn.addEventListener("click", () => {
+        const message = messageInput.value;
+        socket.emit("message", message);
+        messageInput.value = "";
+      });
+
+      socket.on("message", (message) => {
+        const li = document.createElement("li");
+        li.textContent = message;
+        messagesList.appendChild(li);
+      });
+
+      socket.on("connect", () => {
+        console.log("Connected to WebSocket server");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from WebSocket server");
+      });
+    </script>
+  </body>
+</html>
